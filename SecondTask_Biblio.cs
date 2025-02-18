@@ -9,7 +9,7 @@ namespace OTUS_DZ_ObservableCollection
 {
     public class SecondTask_Biblio
     {
-        private ConcurrentDictionary<string, int> cd_List = new;
+        private ConcurrentDictionary<string, int> cd_List = new();
         public bool Add(string bookName) 
         { 
 

@@ -1,16 +1,26 @@
 ﻿using System;
+using System.Globalization;
 
 namespace OTUS_DZ_ObservableCollection
 {
     internal class Program
     {
-        static void Main()
+        
+        public static void Main()
         {
 
             FirstTask();
             Console.WriteLine();
             Console.WriteLine(new string('-', Console.WindowWidth));
-            SecondTask();
+
+
+            SecondTask_Biblio biblio = new SecondTask_Biblio();
+
+            Thread ProcessOfReading = new Thread(() => ReadingProcess(biblio));
+            ProcessOfReading.Start();
+            
+            SecondTask(biblio);
+            //SecondTask();
             Console.WriteLine();
             Console.WriteLine(new string('-', Console.WindowWidth));
 
@@ -84,10 +94,15 @@ namespace OTUS_DZ_ObservableCollection
             Console.WriteLine(" Чтобы выйти нажмите X");
         }
 
-        public static void SecondTask()
+        public static void SecondTask(SecondTask_Biblio biblio)
         {
             Console.WriteLine("Второе задание");
             Console.WriteLine();
+
+            //SecondTask_Biblio biblio = new SecondTask_Biblio();
+
+
+
 
             while (true)
             {
@@ -95,6 +110,8 @@ namespace OTUS_DZ_ObservableCollection
                 StartMessage2();
                 string word = Console.ReadLine();
 
+                //Thread ProcessOfReading = new Thread(biblio.ReadingProcess);
+                //ProcessOfReading.Start();
 
 
                 if (string.IsNullOrEmpty(word))
@@ -121,10 +138,19 @@ namespace OTUS_DZ_ObservableCollection
                             continue;
                         }
 
+                        if (biblio.Add(wordName))
+                        {
+                            Console.WriteLine("  Книга добавлена!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("  Книга НЕ добавлена! ДУБЛЬ!");
+                        }
+
                     }
                     if (word.ToLower() == "2")
                     {
-
+                        biblio.ShowList();
 
                     }
 
@@ -141,6 +167,31 @@ namespace OTUS_DZ_ObservableCollection
             Console.WriteLine(" Введите 1 - добавить книгу");
             Console.WriteLine(" Введите 2 - вывести список непрочитанного");
             Console.WriteLine(" Введите 3 - выйти");
+        }
+
+        public static void ReadingProcess(SecondTask_Biblio biblio)
+        {
+            while (true)
+            {
+                foreach (var item in biblio.cd_List)
+                {
+                    int newValue = item.Value + 1;
+                    biblio.cd_List.TryUpdate(item.Key, newValue, item.Value);
+
+                    if (item.Value >= 100)
+                    {
+                        int removeValue1;
+                        string removeKey = item.Key;
+                        if (biblio.cd_List.TryRemove(item.Key, out removeValue1))
+                        {
+                            Console.WriteLine($"Удалена книга {removeKey}, т.к. она прочитана от корки до корки");
+                            break;
+                        }
+                    }
+                }
+                Thread.Sleep(1000);
+
+            }
         }
     }
 }

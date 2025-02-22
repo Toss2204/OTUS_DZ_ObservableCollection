@@ -11,7 +11,7 @@ namespace OTUS_DZ_ObservableCollection
     {
 
         ObservableCollection<FirstTask_Item> col = new ObservableCollection<FirstTask_Item>();
-
+        private int ID_counter;
         public FirstTask_Shop(FirstTask_Customer customer) 
         { 
             col.CollectionChanged+= customer.OnItemChanged;
@@ -23,7 +23,7 @@ namespace OTUS_DZ_ObservableCollection
         public void Add()
         { 
             FirstTask_Item item = new FirstTask_Item();
-            item._Id = col.Count;
+            item._Id = ID_counter++;
             item._Name = $"Товар {DateTime.Now.ToString("MMMM d, yyyy, hh:mm:ss")}";
             col.Add(item);
             Console.WriteLine($"{item._Name} добавлен. Всего товаров: {col.Count}");
@@ -50,6 +50,9 @@ namespace OTUS_DZ_ObservableCollection
             {
                 Console.WriteLine($"Товар {id} не найден. Всего товаров: {col.Count}");
             }
+
+            if (col.Count == 0)
+            { ID_counter = 0; }
             //
 
 
